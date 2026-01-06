@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Portfólio – Bruno Refael</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0d1117;
+      color: #c9d1d9;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    p.subtitle {
+      text-align: center;
+      color: #8b949e;
+      margin-bottom: 30px;
+    }
+
+    .repos {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+
+    .card h2 {
+      font-size: 18px;
+      margin: 0 0 8px;
+      color: #58a6ff;
+    }
+
+    .description {
+      font-size: 14px;
+      color: #8b949e;
+      margin-bottom: 12px;
+    }
+
+    .meta {
+      font-size: 13px;
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .language {
+      font-weight: bold;
+    }
+
+    .actions a {
+      text-decoration: none;
+      color: #0d1117;
+      background: #238636;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      text-align: center;
+      display: inline-block;
+    }
+
+    .actions a:hover {
+      background: #2ea043;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      font-size: 13px;
+      color: #8b949e;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🚀 Portfólio GitHub</h1>
+  <p class="subtitle">Projetos públicos de <strong>Bruno Refael</strong></p>
+
+  <div class="repos" id="repos"></div>
+
+  <footer>
+    Dados consumidos via GitHub REST API
+  </footer>
+
+  <script>
+    const username = "brunorefa";
+    const reposContainer = document.getElementById("repos");
+
+    fetch(`https://api.github.com/users/${username}/repos`)
+      .then(response => response.json())
+      .then(repos => {
+        repos
+          .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))
+          .forEach(repo => {
+            const card = document.createElement("div");
+            card.className = "card";
+
+            card.innerHTML = `
+              <div>
+                <h2>${repo.name}</h2>
+                <p class="description">
+                  ${repo.description || "Sem descrição"}
+                </p>
+
+                <div class="meta">
+                  <span class="language">
+                    ${repo.language || "N/A"}
+                  </span>
+                  <span>
+                    ⭐ ${repo.stargazers_count}
+                  </span>
+                </div>
+              </div>
+
+              <div class="actions">
+                <a href="${repo.html_url}" target="_blank">
+                  Ver no GitHub
+                </a>
+              </div>
+            `;
+
+            reposContainer.appendChild(card);
+          });
+      })
+      .catch(error => {
+        reposContainer.innerHTML = "Erro ao carregar repositórios.";
+        console.error(error);
+      });
+  </script>
+
+</body>
+</html>
